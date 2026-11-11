@@ -3,7 +3,7 @@ module github.com/cb-Sigma/kubectl-gpu-fit
 go 1.24.0
 
 require (
-	github.com/spf13/cobra v1.10.1
+	github.com/spf13/cobra v1.10.2
 	golang.org/x/term v0.34.0
 	k8s.io/api v0.34.1
 	k8s.io/apimachinery v0.34.1
