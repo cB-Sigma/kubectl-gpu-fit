@@ -1,0 +1,19 @@
+# Build outputs
+/kubectl-gpu-fit
+/kubectl-gpu-fit.exe
+/bin/
+/dist/
+*.test
+*.out
+coverage.*
+
+# Local development
+/fake-cluster.kubeconfig
+*.kubeconfig
+.env
+
+# Editors and OS
+.idea/
+.vscode/
+*.swp
+.DS_Store

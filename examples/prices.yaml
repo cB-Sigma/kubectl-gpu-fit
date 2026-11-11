@@ -1,0 +1,19 @@
+# Hourly GPU prices in USD, for --price-file.
+#
+#   kubectl gpu-fit -A --price-file examples/prices.yaml
+#
+# Keys are model keys (a100-80gb) or families (a100, which sets every memory
+# variant). Models you leave out keep the built-in estimate. Run
+# `kubectl gpu-fit --price x=1` to see the list of known names.
+#
+# The numbers below are placeholders: replace them with what you actually pay
+# (committed-use rate, reserved price, or amortized hardware cost per hour).
+prices:
+  t4: 0.35
+  l4: 0.60
+  a10: 0.90
+  l40s: 1.50
+  a100-40gb: 2.20
+  a100-80gb: 2.90
+  h100: 4.25
+  h200: 5.50

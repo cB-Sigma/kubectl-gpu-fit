@@ -1,0 +1,36 @@
+name: Bug report
+description: A wrong recommendation, a crash, or metrics that are not picked up
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What did you run, what did you expect, what did you get? Paste the output (`-o wide` or `--explain` helps).
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: kubectl-gpu-fit version
+      description: Output of `kubectl gpu-fit version`
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: |
+        Kubernetes version and distribution (GKE, EKS, AKS, on-prem ...), GPU models,
+        dcgm-exporter / GPU Operator version, and which Prometheus (kube-prometheus-stack, Thanos, managed ...).
+    validations:
+      required: true
+  - type: textarea
+    id: series
+    attributes:
+      label: A sample DCGM series
+      description: |
+        If metrics are missing or attributed to the wrong pod, the label set of one series is the fastest way to a fix:
+        `curl -s "$PROM/api/v1/query?query=DCGM_FI_DEV_GPU_UTIL" | jq '.data.result[0].metric'`
+        (try `DCGM_FI_DEV_GPU_UTIL_RATIO` on dcgm-exporter 4.9+). Redact names as needed.
+      render: json

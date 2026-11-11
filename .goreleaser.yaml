@@ -1,0 +1,66 @@
+# Release configuration. Releases are cut by pushing a v* tag; see
+# .github/workflows/release.yml. Validate locally with `goreleaser check`
+# and try a build with `goreleaser release --snapshot --clean`.
+version: 2
+
+project_name: kubectl-gpu-fit
+
+before:
+  hooks:
+    - go mod tidy
+
+builds:
+  - id: kubectl-gpu-fit
+    main: .
+    binary: kubectl-gpu-fit
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+      - arm64
+    flags:
+      - -trimpath
+    ldflags:
+      - -s -w
+      - -X github.com/cb-Sigma/kubectl-gpu-fit/internal/cmd.Version={{ .Version }}
+      - -X github.com/cb-Sigma/kubectl-gpu-fit/internal/cmd.Commit={{ .ShortCommit }}
+      - -X github.com/cb-Sigma/kubectl-gpu-fit/internal/cmd.Date={{ .CommitDate }}
+    mod_timestamp: "{{ .CommitTimestamp }}"
+
+archives:
+  - id: default
+    formats:
+      - tar.gz
+    format_overrides:
+      - goos: windows
+        formats:
+          - zip
+    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    files:
+      - LICENSE
+      - README.md
+      - deploy/rbac.yaml
+      - examples/prices.yaml
+
+checksum:
+  name_template: checksums.txt
+
+snapshot:
+  version_template: "{{ incpatch .Version }}-next"
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"
+      - "^chore:"
+      - "^ci:"
+
+release:
+  draft: false
+  prerelease: auto

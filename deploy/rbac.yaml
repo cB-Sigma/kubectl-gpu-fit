@@ -1,0 +1,62 @@
+# Minimum permissions for kubectl-gpu-fit. Everything here is read-only.
+#
+#   kubectl apply -f deploy/rbac.yaml
+#   kubectl create clusterrolebinding gpu-fit-alice \
+#     --clusterrole=kubectl-gpu-fit --user=alice@example.com
+#
+# The ClusterRole is enough when you pass --prometheus-url. To let the tool
+# reach an in-cluster Prometheus through the API server (the default), also
+# bind the Role at the bottom of this file.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kubectl-gpu-fit
+  labels:
+    app.kubernetes.io/name: kubectl-gpu-fit
+rules:
+  # Find running pods that request nvidia.com/gpu (or MIG / shared GPUs).
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["list"]
+  # Group pods into Deployments and CronJobs. Optional: without these the
+  # workload name is inferred from the pod's owner reference.
+  - apiGroups: ["apps"]
+    resources: ["replicasets"]
+    verbs: ["get"]
+  - apiGroups: ["batch"]
+    resources: ["jobs"]
+    verbs: ["get"]
+  # Read GPU Feature Discovery labels (model, memory, sharing strategy).
+  # Optional: without it GPU models come from DCGM labels only.
+  - apiGroups: [""]
+    resources: ["nodes"]
+    verbs: ["list"]
+  # Discover the Prometheus Service. Not needed with --prometheus-url or
+  # --prometheus-service.
+  - apiGroups: [""]
+    resources: ["services"]
+    verbs: ["list"]
+---
+# Lets the tool send read-only queries to ONE Prometheus Service through the
+# API server proxy. Adjust the namespace and the resource name to your
+# installation; the name must be "<service>:<port>" with the port exactly as
+# the tool reports it (kubectl gpu-fit prints the Service it used in the
+# "source" field of -o json), e.g.
+#   kube-prometheus-stack:  kube-prometheus-stack-prometheus:http-web
+#   prometheus-operator:    prometheus-k8s:web
+#   prometheus (Helm):      prometheus-server:http
+#
+# services/proxy on a Service grants whatever that Service exposes over HTTP
+# GET, so keep it scoped to the Prometheus Service by name as done here.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: kubectl-gpu-fit-prometheus
+  namespace: monitoring
+  labels:
+    app.kubernetes.io/name: kubectl-gpu-fit
+rules:
+  - apiGroups: [""]
+    resources: ["services/proxy"]
+    resourceNames: ["kube-prometheus-stack-prometheus:http-web"]
+    verbs: ["get"]
