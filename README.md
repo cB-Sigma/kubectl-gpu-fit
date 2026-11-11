@@ -64,7 +64,7 @@ If you run the NVIDIA GPU Operator (or dcgm-exporter on its own), the data to an
 
 ## Install
 
-**With Go** (1.24 or newer):
+**With Go** (1.26 or newer):
 
 ```sh
 go install github.com/cb-Sigma/kubectl-gpu-fit@latest

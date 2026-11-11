@@ -21,7 +21,7 @@ Redact pod and namespace names if you need to; the label *names* are what matter
 
 ## Development setup
 
-You need Go 1.24 or newer and, for linting, [golangci-lint](https://golangci-lint.run/) v2. No cluster and no GPU are required.
+You need Go 1.26 or newer and, for linting, [golangci-lint](https://golangci-lint.run/) v2. No cluster and no GPU are required.
 
 ```sh
 git clone https://github.com/cb-Sigma/kubectl-gpu-fit.git
